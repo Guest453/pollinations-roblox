@@ -167,19 +167,21 @@ local function isSecretValue(value: any): boolean
 	return ok and type(addPrefix) == "function"
 end
 
-local function buildAuthHeader(apiKey: any): (string?, string?)
+-- Returns the raw Bearer token value (NOT a "Header: value" string). The call
+-- site sets it as the *value* of the Authorization header.
+local function buildAuthToken(apiKey: any): (string?, string?)
 	if apiKey == nil then
 		return nil, nil
 	end
 	if isSecretValue(apiKey) then
-		-- Secret:AddPrefix returns a full header value with the secret inserted
-		-- ("Authorization: Bearer Secret(pollinations_key)"). Per Roblox docs,
-		-- secrets may be inserted directly into request headers, never the body.
-		local ok, headerValue = pcall(function()
-			return (apiKey :: any):AddPrefix("Authorization: Bearer ")
+		-- Secret:AddPrefix returns the secret with a prefix. Pass an empty prefix
+		-- to get the raw key; the caller prepends "Bearer ". Secrets may be used
+		-- in request headers, never the body.
+		local ok, token = pcall(function()
+			return (apiKey :: any):AddPrefix("")
 		end)
-		if ok and type(headerValue) == "string" then
-			return headerValue, nil
+		if ok and type(token) == "string" then
+			return token, nil
 		end
 		return nil, "ApiKey looks like a Secret but Secret:AddPrefix failed"
 	end
@@ -187,7 +189,7 @@ local function buildAuthHeader(apiKey: any): (string?, string?)
 		if apiKey == "" then
 			return nil, "ApiKey is an empty string"
 		end
-		return "Authorization: Bearer " .. apiKey, nil
+		return apiKey, nil
 	end
 	return nil, "ApiKey must be a string or an HttpService Secret"
 end
@@ -313,7 +315,7 @@ function Pollinations.chat(model: any, messages: any, opts: {[string]: any}?): {
 		return { ok = false, kind = "bad_request", error = 'model must be a string like "openai/gpt-5.4-nano" (see Pollinations.listModels())' }
 	end
 
-	local authHeader, authError = buildAuthHeader(cfg.ApiKey)
+	local authToken, authError = buildAuthToken(cfg.ApiKey)
 	if authError then
 		return { ok = false, kind = "bad_request", error = authError }
 	end
@@ -352,8 +354,8 @@ function Pollinations.chat(model: any, messages: any, opts: {[string]: any}?): {
 	local headers: {[string]: string} = {
 		["Content-Type"] = "application/json",
 	}
-	if authHeader then
-		headers["Authorization"] = authHeader
+	if authToken then
+		headers["Authorization"] = "Bearer " .. authToken
 	end
 
 	local attemptsAllowed = math.max(1, (tonumber(cfg.Retries) or 2) + 1)
@@ -456,14 +458,14 @@ function Pollinations.ask(prompt: any, opts: {[string]: any}?): {[string]: any}
 	local url = cfg.BaseUrl .. "/text/" .. Pollinations.encodeUriComponent(prompt)
 		.. "?model=" .. Pollinations.encodeUriComponent(tostring(options.Model or cfg.Model))
 
-	local authHeader, authError = buildAuthHeader(cfg.ApiKey)
+	local authToken, authError = buildAuthToken(cfg.ApiKey)
 	if authError then
 		return { ok = false, kind = "bad_request", error = authError }
 	end
 
 	local headers: {[string]: string} = {}
-	if authHeader then
-		headers["Authorization"] = authHeader
+	if authToken then
+		headers["Authorization"] = "Bearer " .. authToken
 	end
 
 	local okRequest, response = pcall(function()
@@ -515,14 +517,14 @@ function Pollinations.listModels(opts: {[string]: any}?): {[string]: any}
 		return { ok = false, kind = "network", error = jsonError }
 	end
 
-	local authHeader, authError = buildAuthHeader(cfg.ApiKey)
+	local authToken, authError = buildAuthToken(cfg.ApiKey)
 	if authError then
 		return { ok = false, kind = "bad_request", error = authError }
 	end
 
 	local headers: {[string]: string} = {}
-	if authHeader then
-		headers["Authorization"] = authHeader
+	if authToken then
+		headers["Authorization"] = "Bearer " .. authToken
 	end
 
 	local okRequest, response = pcall(function()
