@@ -1,0 +1,72 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  analyze:
+    name: luau-analyze (Roblox defs)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Luau tooling
+        run: |
+          mkdir -p tools
+          curl -sL -o tools/luau.zip https://github.com/luau-lang/luau/releases/latest/download/luau-ubuntu.zip
+          unzip -o tools/luau.zip -d tools
+          chmod +x tools/luau tools/luau-analyze
+          curl -sL -o tools/lualsp.zip https://github.com/JohnnyMorganz/luau-lsp/releases/latest/download/luau-lsp-linux-x86_64.zip
+          unzip -o tools/lualsp.zip -d tools
+          chmod +x tools/luau-lsp
+          curl -sL -o tools/globalTypes.d.luau https://raw.githubusercontent.com/JohnnyMorganz/luau-lsp/main/scripts/globalTypes.d.luau
+
+      - name: Generate Rojo sourcemap
+        run: |
+          curl -sL -o tools/rojo.zip https://github.com/rojo-rbx/rojo/releases/download/v7.7.0/rojo-7.7.0-linux-x86_64.zip
+          unzip -o tools/rojo.zip -d tools
+          chmod +x tools/rojo
+          tools/rojo sourcemap default.project.json -o sourcemap.json
+
+      - name: Analyze (type check + lint, Roblox definitions)
+        run: |
+          tools/luau-lsp analyze \
+            --definitions tools/globalTypes.d.luau \
+            --sourcemap sourcemap.json \
+            src/Pollinations.lua src/NpcDialogue.lua demo/DemoServer.server.lua
+
+  test:
+    name: unit tests (plain Luau)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Luau
+        run: |
+          mkdir -p tools
+          curl -sL -o tools/luau.zip https://github.com/luau-lang/luau/releases/latest/download/luau-ubuntu.zip
+          unzip -o tools/luau.zip -d tools
+          chmod +x tools/luau
+
+      - name: Run test suite
+        run: tools/luau tests/test_pollinations.luau
+
+  build:
+    name: rojo build example place
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build example-place.rbxlx
+        run: |
+          curl -sL -o rojo.zip https://github.com/rojo-rbx/rojo/releases/download/v7.7.0/rojo-7.7.0-linux-x86_64.zip
+          unzip -o rojo.zip
+          chmod +x rojo
+          ./rojo build default.project.json -o example-place.rbxlx
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: example-place
+          path: example-place.rbxlx

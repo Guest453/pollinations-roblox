@@ -1,0 +1,14 @@
+# gitignore for pollinations-roblox
+*.rbxlx.lock
+sourcemap.json
+/version.json
+/packages/
+/ServerPackages/
+*.rbxm
+*.rbxl
+# keep the committed example place:
+!example-place.rbxlx
+.AppleDouble
+.DS_Store
+tools/
+sourcemap.json

@@ -1,0 +1,13 @@
+[package]
+name = "pollinations/pollinations-roblox"
+version = "1.0.0"
+description = "Pollinations text API client + NPC dialogue helper for Roblox"
+license = "MIT"
+authors = ["Guest453"]
+realm = "shared"
+registry = "https://github.com/pollinations/wally-index"
+
+[dependencies]
+
+[dev_dependencies]
+TestEZ = "roblox/testez@0.4.1"

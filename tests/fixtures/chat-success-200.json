@@ -1,0 +1,4 @@
+{
+  "captured": "2026-09-27, POST https://gen.pollinations.ai/v1/chat/completions (anonymous trial window, no key)",
+  "body": {"choices":[{"content_filter_results":{},"finish_reason":"stop","index":0,"logprobs":null,"message":{"annotations":[],"content":"Hello, how are you?","refusal":null,"role":"assistant"}}],"created":1790254962,"id":"chatcmpl-ERdNyoIFsmGoCrgdrufUwbrMP3C2a","model":"gpt-5.4-nano-2026-03-17","object":"chat.completion","usage":{"completion_tokens":9,"prompt_tokens":21,"total_tokens":30}}
+}

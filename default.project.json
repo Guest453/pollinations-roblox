@@ -1,0 +1,162 @@
+{
+  "name": "pollinations-roblox-example",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "Pollinations": {
+        "$path": "src/Pollinations.lua"
+      },
+      "NpcDialogue": {
+        "$path": "src/NpcDialogue.lua"
+      }
+    },
+    "ServerScriptService": {
+      "PollenVillageDemo": {
+        "$path": "demo/DemoServer.server.lua"
+      }
+    },
+    "Workspace": {
+      "$className": "Workspace",
+      "Baseplate": {
+        "$className": "Part",
+        "$properties": {
+          "Anchored": true,
+          "Size": [
+            160,
+            4,
+            160
+          ],
+          "Position": [
+            0,
+            -2,
+            0
+          ],
+          "Color": [
+            0.33,
+            0.65,
+            0.35
+          ],
+          "TopSurface": "Smooth",
+          "BottomSurface": "Smooth",
+          "Material": "Grass"
+        }
+      },
+      "SpawnLocation": {
+        "$className": "SpawnLocation",
+        "$properties": {
+          "Anchored": true,
+          "Size": [
+            12,
+            1,
+            12
+          ],
+          "Position": [
+            0,
+            0.5,
+            12
+          ],
+          "Color": [
+            0.85,
+            0.85,
+            0.85
+          ],
+          "TopSurface": "Smooth",
+          "BottomSurface": "Smooth",
+          "Duration": 0
+        }
+      },
+      "PollenVillage": {
+        "$className": "Model",
+        "Bella": {
+          "$className": "Model",
+          "Body": {
+            "$className": "Part",
+            "$properties": {
+              "Anchored": true,
+              "Size": [
+                3,
+                3.6,
+                2
+              ],
+              "Position": [
+                0,
+                1.8,
+                -8
+              ],
+              "Color": [
+                1,
+                0.79,
+                0.26
+              ],
+              "Material": "SmoothPlastic"
+            },
+            "Talk": {
+              "$className": "ProximityPrompt",
+              "$properties": {
+                "ActionText": "Talk to Bella",
+                "ObjectText": "Bella the Beekeeper",
+                "MaxActivationDistance": 12,
+                "RequiresLineOfSight": false
+              }
+            }
+          },
+          "Head": {
+            "$className": "Part",
+            "$properties": {
+              "Anchored": true,
+              "Size": [
+                2,
+                2,
+                2
+              ],
+              "Position": [
+                0,
+                4.6,
+                -8
+              ],
+              "Color": [
+                1,
+                0.89,
+                0.55
+              ],
+              "Material": "SmoothPlastic"
+            }
+          }
+        },
+        "Sign": {
+          "$className": "Part",
+          "$properties": {
+            "Anchored": true,
+            "Size": [
+              14,
+              4,
+              0.6
+            ],
+            "Position": [
+              0,
+              5,
+              -20
+            ],
+            "Color": [
+              0.35,
+              0.24,
+              0.15
+            ],
+            "Material": "WoodPlanks"
+          }
+        }
+      }
+    },
+    "Lighting": {
+      "$className": "Lighting",
+      "$properties": {
+        "OutdoorAmbient": [
+          0.7,
+          0.7,
+          0.7
+        ],
+        "ClockTime": 14
+      }
+    }
+  }
+}
